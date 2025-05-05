@@ -17,7 +17,6 @@ compound-v2-scoring/
 ├── feature_engineering.py  # Wallet-level feature extraction
 ├── scoring_model.py        # Credit scoring model
 ├── main.py                 # Main execution script
-├── test_scoring.py         # Unit tests
 ├── output/
 │   ├── top_1000_wallets.csv    # Top 1000 wallets sorted by score
 │   ├── wallet_analysis.md      # Analysis of top 5 and bottom 5 wallets
