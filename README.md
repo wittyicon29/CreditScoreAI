@@ -1,108 +1,67 @@
-## Problem Understanding
+# Compound V2 Credit Scoring System
 
-The challenge requires developing a credit scoring system for Compound V2 protocol wallets based solely on transaction behavior. This is an unsupervised learning problem where we need to:
-1. Define what constitutes "good" vs "bad" wallet behavior
-2. Engineer features from raw transaction data
-3. Create a scoring model that ranks wallets from 0-100
+## Overview
+This project implements an AI-powered, decentralized credit scoring system for Compound V2 protocol wallets. The system analyzes historical transaction data to assign credit scores between 0 and 100 to each wallet, with higher scores indicating more reliable and responsible usage.
 
-## My Approach
+## Features
+- **End-to-end data pipeline**: Processes raw transaction data, engineers features, and generates scores
+- **Comprehensive feature engineering**: Extracts behavioral patterns including transaction activity, financial health, risk indicators, and stability metrics
+- **Explainable scoring system**: Provides detailed reasoning for each wallet's score
+- **Bot detection**: Identifies and penalizes bot-like behavior
+- **Risk assessment**: Evaluates liquidation history and other risk factors
 
-### 1. Data Processing
+## Project Structure
+```
+compound-v2-scoring/
+├── data_processing.py      # Data loading and preprocessing
+├── feature_engineering.py  # Wallet-level feature extraction
+├── scoring_model.py        # Credit scoring model
+├── main.py                 # Main execution script
+├── test_scoring.py         # Unit tests
+├── output/
+│   ├── top_1000_wallets.csv    # Top 1000 wallets sorted by score
+│   ├── wallet_analysis.md      # Analysis of top 5 and bottom 5 wallets
+│   ├── methodology.md          # Scoring methodology documentation
+│   └── score_distribution.png  # Distribution of scores
+```
 
-I designed a data pipeline that:
-- Loads and combines transaction data from multiple JSON files (deposits, borrows, repays, etc.)
-- Standardizes column names and data types
-- Converts timestamps to datetime objects
-- Handles extremely large values (common in blockchain data)
+## Installation
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/compound-v2-scoring.git
+cd compound-v2-scoring
 
-### 2. Feature Engineering
+# Install dependencies
+pip install pandas numpy scikit-learn matplotlib seaborn tqdm
+```
 
-I engineered features in four key categories:
+## Usage
+1. Download the Compound V2 dataset from the provided Google Drive link
+2. Place the 3 largest JSON files in the project directory
+3. Run the main script:
+```bash
+python main.py
+```
 
-**Transaction Behavior:**
-- Transaction counts and frequency
-- Asset diversity
-- Transaction size patterns
-- Activity diversity (types of actions performed)
+## Methodology
+Our credit scoring approach is based on four key pillars:
 
-**Financial Health:**
-- Borrow-to-deposit ratio
-- Repayment consistency
-- Net position calculation
-- Withdrawal patterns
+1. **Transaction Behavior**: We analyze patterns in transaction frequency, size, and diversity.
+2. **Financial Health**: We assess borrowing/repayment ratios and overall balance sheet health.
+3. **Risk Factors**: We identify liquidations, high leverage, and other warning signs.
+4. **Account Stability**: We consider account age, consistency, and pattern regularity.
 
-**Risk Indicators:**
-- Liquidation history
-- Borrowing without repayment
-- Same-day deposit-withdrawals (potential wash trading)
-- High leverage positions
+The model uses a weighted feature approach where:
+- Positive behaviors (consistent repayment, long-term engagement) increase scores
+- Negative behaviors (liquidations, excessive borrowing) decrease scores
+- Bot-like behaviors result in significant penalties
 
-**Stability Metrics:**
-- Account age
-- Transaction timing regularity
-- Bot-like behavior detection
-- Long-term engagement
-
-### 3. Scoring Model
-
-I implemented a weighted feature approach where:
-- Each feature receives a weight based on its importance to creditworthiness
-- Positive behaviors increase scores
-- Negative behaviors (liquidations, high leverage) reduce scores
-- Bot-like behaviors receive significant penalties
-- Final scores are normalized to 0-100 range
-
-### 4. Wallet Analysis
-
-The model explains each wallet's score by:
-- Identifying key strengths and weaknesses
-- Providing specific behavioral patterns
-- Comparing against overall population
-- Grouping wallets into behavioral clusters
-
-## Key Design Decisions
-
-1. **Unsupervised Approach**: Since no labeled data exists, I defined good vs. bad behavior based on financial principles.
-
-2. **Explainable Scoring**: Every score component is transparent and interpretable.
-
-3. **Behavioral vs. Balance Focus**: The model emphasizes patterns of behavior rather than just account balances.
-
-4. **Risk-Adjusted Metrics**: Higher penalties for behaviors that threaten protocol health.
-
-5. **Bot Detection**: Special attention to identifying and appropriately scoring automated trading.
-
-## Deliverables
-
-1. **Methodology Document**: Detailed explanation of the scoring approach
-2. **Code Implementation**: Complete, modular codebase with:
-   - Data processing
-   - Feature engineering
-   - Scoring model
-   - Analysis generation
-3. **Top 1000 Wallets CSV**: Sorted by credit score
-4. **Wallet Analysis**: In-depth examination of 5 high and 5 low scoring wallets
-
-## Implementation Details
-
-The code is structured in a modular, maintainable way:
-- `data_processing.py`: Handles data loading and preparation
-- `feature_engineering.py`: Extracts wallet-level features
-- `scoring_model.py`: Implements the credit scoring logic
-- `main.py`: Orchestrates the end-to-end pipeline
-- `test_scoring.py`: Validates the model's functionality
-
-## Credit Score Interpretation
-
-- **80-100**: Excellent - Responsible protocol usage with consistent repayment
-- **60-79**: Good - Generally responsible with minor risk factors
+## Score Interpretation
+- **80-100**: Excellent - Responsible protocol usage with consistent repayment and long-term engagement
+- **60-79**: Good - Generally responsible behavior with minor risk factors
 - **40-59**: Moderate - Mixed behavior with some concerning patterns
 - **20-39**: Poor - Multiple risk factors present
-- **0-19**: Very Poor - High-risk behavior or bot-like activity
+- **0-19**: Very Poor - High-risk behavior, liquidations, or bot-like activity
 
-The model emphasizes these key factors for high scores:
-1. Consistent repayment of borrowed funds
-2. Long-term protocol engagement
-3. Responsible borrowing (maintaining healthy collateral ratios)
-4. No liquidation events
-5. Human-like (non-bot) transaction patterns
+## License
+MIT License
